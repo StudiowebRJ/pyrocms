@@ -109,7 +109,11 @@ class Public_Controller extends MY_Controller
 		$this->template->settings = $this->settings->get_all();
 		$this->template->server = $_SERVER;
 		$this->template->theme = $this->theme;
-
+		
+		if ($this->template->settings['cdn_domain']){
+			Asset::set_url($this->template->settings['cdn_domain']);
+		}
+		
 		$this->benchmark->mark('public_controller_end');
 	}
 }

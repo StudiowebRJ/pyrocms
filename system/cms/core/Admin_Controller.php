@@ -27,12 +27,17 @@ class Admin_Controller extends MY_Controller {
 		// Load the Language files ready for output
 		$this->lang->load('admin');
 		$this->lang->load('buttons');
-		
+
 		// Show error and exit if the user does not have sufficient permissions
 		if ( ! self::_check_access())
 		{
-			$this->session->set_flashdata('error', lang('cp_access_denied'));
-			redirect();
+			
+			if ($this->input->is_ajax_request()){
+				die(json_encode(array('status'=>'error', 'data'=> lang('cp_access_denied'))));
+			} else {
+				$this->session->set_flashdata('error', lang('cp_access_denied'));
+				redirect();
+			}
 		}
 
 		// If the setting is enabled redirect request to HTTPS
@@ -96,7 +101,8 @@ class Admin_Controller extends MY_Controller {
 		}
 		else if ( ! $this->current_user)
 		{
-			redirect('admin/login');
+			if ($this->input->is_ajax_request()) die(json_encode(array('status'=>'error', 'data'=>lang('cp_must_login'))));
+			else redirect('admin/login');
 		}
 
 		// Admins can go straight in
